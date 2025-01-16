@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趣味空间</title>
+    <style>
+       body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(rgb(235, 185, 193), rgb(182, 227, 231));
+            color: #484848;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .floating-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); }
+            100% { transform: translateY(-100px) scale(1); }
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            min-height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(119, 170, 255, 0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(119, 170, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .emoji-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #77aaff;
+            text-shadow: 0 0 10px rgba(119, 170, 255, 0.5);
+        }
+
+        #cursor-follower {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #77aaff;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.1s;
+            z-index: 9999;
+        }
+
+        #drawCanvas {
+            background: #000000;
+            border-radius: 8px;
+            cursor: crosshair;
+            margin-top: 10px;
+        }
+
+        button {
+            background: #77aaff;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #5588dd;
+        }
+
+        .game-button {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: #484848;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .game-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(119, 170, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(119, 170, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(119, 170, 255, 0);
+            }
+        }
+        .game-button:before {
+            content: '🐍🐍🐍';
+            margin-right: 8px;
+            animation: wiggle 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes wiggle {
+            0%, 100% {
+                transform: rotate(-5deg);
+            }
+            50% {
+                transform: rotate(5deg);
+            }
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal p {
+            font-size: 18px;
+            color: #484848;
+            margin: 0;
+        }
+
+        .modal.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            display: flex;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: rgba(160, 171, 191, 0.5);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .home-button:hover {
+            background-color: rgba(170, 176, 181, 0.5); 
+        }
+</style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="home-button" style="position: absolute; top: 10px; right: 10px;">返回首页</a>
+    </nav>
+    <a href="snake.html" class="game-button" onclick="showGameWarning(event)"> 贪吃蛇</a>
+    <div id="cursor-follower"></div>
+    <div class="floating-bubbles"></div>
+    <div class="container">
+        <h1 class="title">趣味空间</h1>
+        <div class="card-container">
+            <div class="card" onclick="spawnEmojis(event)">
+                <h2>点击生成表情雨 🎉</h2>
+                <p>点击这里，看看会发生什么有趣的事情！</p>
+            </div>
+            <div class="card" id="bubbleCard">
+                <h2>泡泡机 🫧</h2>
+                <p>点击泡泡机，看看会出现什么～</p>
+            </div>
+            <div class="card" id="quoteCard">
+                <h2>随机名言 💭</h2>
+                <p>点击获取一句随机名言。</p>
+            </div>
+            <div class="card" id="drawCard">
+                <h2>迷你画板 🎨</h2>
+                <canvas id="drawCanvas" width="260" height="150"></canvas>
+                <button id="clearCanvas">清除</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="welcomeModal">
+        <div class="modal">
+            <p>技能正在挖掘中……那就先看点有趣的东西吧~</p>
+        </div>
+    </div>
+    <div class="modal-overlay" id="gameWarningModal">
+        <div class="modal">
+            <p>该小游戏较为困难，切忌红温！</p>
+        </div>
+    </div>
+
+    <script>
+        function createBubbles() {
+            const bubbleContainer = document.querySelector('.floating-bubbles');
+            for (let i = 0; i < 50; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.width = bubble.style.height = `${Math.random() * 30 + 10}px`;
+                bubble.style.animationDelay = `${Math.random() * 15}s`;
+                bubbleContainer.appendChild(bubble);
+            }
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.getElementById('cursor-follower');
+            cursor.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`;
+        });
+
+        function spawnEmojis(event) {
+            const emojis = ['🎉', '✨', '💫', '⭐', '🌟', '💖', '🎨', '🎭', '🎪'];
+            for (let i = 0; i < 20; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'emoji-rain';
+                emoji.style.left = `${event.clientX}px`;
+                emoji.style.top = `${event.clientY}px`;
+                emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                document.body.appendChild(emoji);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 5 + 2;
+                const dx = Math.cos(angle) * velocity;
+                const dy = Math.sin(angle) * velocity;
+                let x = event.clientX;
+                let y = event.clientY;
+
+                const animate = () => {
+                    x += dx;
+                    y += dy;
+                    emoji.style.transform = `translate(${x - event.clientX}px, ${y - event.clientY}px)`;
+                    emoji.style.opacity = emoji.style.opacity || 1;
+                    emoji.style.opacity -= 0.02;
+
+                    if (emoji.style.opacity > 0) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        emoji.remove();
+                    }
+                };
+                requestAnimationFrame(animate);
+            }
+        }
+
+        let isGeneratingBubbles = false;
+
+        const bubbleCard = document.getElementById('bubbleCard');
+        bubbleCard.addEventListener('click', () => {
+            isGeneratingBubbles = !isGeneratingBubbles;
+            
+            bubbleCard.querySelector('p').textContent = 
+                isGeneratingBubbles ? '点击关闭泡泡机' : '在这里移动鼠标，看看会出现什么～';
+            
+            bubbleCard.style.background = 
+                isGeneratingBubbles ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isGeneratingBubbles) return;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            const size = Math.random() * 100 + 50;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            
+            const hue = Math.random() * 360;
+            
+            bubble.style.left = `${e.clientX}px`;
+            bubble.style.top = `${e.clientY}px`;
+            
+            document.body.appendChild(bubble);
+            
+            bubble.addEventListener('animationend', () => {
+                bubble.remove();
+            });
+        });
+
+        const quotes = [
+            "生活就像一盒巧克力，你永远不知道下一块是什么味道。",
+            "快乐是一种选择，而不是结果。",
+            "保持微笑，因为生活是美好的，而且还有很多理由值得微笑。",
+            "今天的太阳依然是新的。",
+            "做你自己，其他角色都有人在扮演了。"
+        ];
+
+        const quoteCard = document.getElementById('quoteCard');
+        quoteCard.addEventListener('click', () => {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteCard.querySelector('p').textContent = randomQuote;
+            quoteCard.style.transform = 'scale(1.05)';
+            setTimeout(() => quoteCard.style.transform = '', 200);
+        });
+
+        createBubbles();
+
+    
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        document.getElementById('clearCanvas').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .bubble {
+                position: fixed;
+                border-radius: 50%;
+                pointer-events: none;
+                animation: floatBubble 6s ease-out;
+                z-index: 1000;
+                
+                background: radial-gradient(
+                    circle at 30% 30%,
+                    rgba(255, 255, 255, 0.8) 0%,
+                    rgba(255, 255, 255, 0.3) 25%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0.05) 75%
+                );
+                
+                box-shadow: 
+                    inset -5px -5px 15px rgba(0, 0, 0, 0.1),
+                    inset 5px 5px 15px rgba(255, 255, 255, 0.5),
+                    0 0 20px rgba(255, 255, 255, 0.2),
+                    inset 0 0 20px rgba(255, 255, 255, 0.2);
+                
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                
+                backdrop-filter: blur(5px);
+                
+                transform-style: preserve-3d;
+                backface-visibility: hidden;
+            }
+
+            @keyframes floatBubble {
+                0% {
+                    transform: translate(0, 0) scale(1) rotate(0deg);
+                    opacity: 0.9;
+                }
+                50% {
+                    transform: translate(
+                        ${Math.random() > 0.5 ? '-' : ''}${Math.random() * 200}px,
+                        -300px
+                    ) scale(1.2) rotate(180deg);
+                    opacity: 0.7;
+                }
+                100% {
+                    transform: translate(
+                        ${Math.random() > 0.5 ? '-' : ''}${Math.random() * 400}px,
+                        -600px
+                    ) scale(0) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+
+            .bubble:hover {
+                animation-play-state: paused;
+            }
+
+            #bubbleCard {
+                transition: background 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+
+        window.addEventListener('load', () => {
+            const modal = document.getElementById('welcomeModal');
+            const modalContent = modal.querySelector('.modal');
+            
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            setTimeout(() => {
+                modalContent.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                modalContent.classList.remove('show');
+                setTimeout(() => {
+                    modal.classList.remove('show');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 300);
+                }, 300);
+            }, 3000);
+        });
+        function showGameWarning(event) {
+            event.preventDefault();
+            
+            const modal = document.getElementById('gameWarningModal');
+            const modalContent = modal.querySelector('.modal');
+            
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            setTimeout(() => {
+                modalContent.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                modalContent.classList.remove('show');
+                setTimeout(() => {
+                    modal.classList.remove('show');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        window.location.href = 'snake.html';
+                    }, 300);
+                }, 300);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

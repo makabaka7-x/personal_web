@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我</title>
+    <style>
+        body {
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.2;
+    color: #484848;
+    background: linear-gradient(rgb(235, 185, 193), rgb(182, 227, 231));
+    display: flex;
+    flex-direction: column;
+}
+
+        @keyframes backgroundFade {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #efc7d9;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77aaff 3px solid;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 20px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        header a:hover {
+            color: #77aaff;
+            transform: scale(1.1);
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+            animation: fadeIn 2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        .content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: slideUp 1s ease-in-out;
+            color: #fff;
+            display: flex;
+            gap: 30px;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .content h2 {
+            color: #77aaff;
+        }
+        table {
+            width: 100%;
+            max-width: 500px;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th {
+            background: rgba(119, 170, 255, 0.1);
+            padding: 15px;
+            border: 1px solid #77aaff;
+        }
+        table a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        table a:hover {
+            color: #77aaff;
+        }
+        table p {
+            margin: 0;
+        }
+        .photo-gallery {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .photos {
+            position: relative;
+            width: 200px;
+            height: auto;
+            margin: 0 auto;
+        }
+        .photos img {
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .photos img.active {
+            opacity: 1;
+        }
+        .profile-section {
+            flex: 1;
+        }
+        .image-section {
+            flex: 0 0 300px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>关于我</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="home-button">返回首页 </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="content">
+            <div class="photo-gallery">
+                <div class="photos">
+                    <img src="1.jpg" alt="Photo 1" class="active">
+                    <img src="2.jpg" alt="Photo 2">
+                    <img src="3.jpg" alt="Photo 3">
+                </div>
+            </div>
+            <div class="profile-section">
+                <h2>关于我</h2>
+                <p>你好！我是Makabaka7-x，一个拍照只会剪刀手的大学生。我喜欢学习新技术，并且乐于分享我的知识和经验。</p>
+                <strong>这里是可供学习的一些途径，希望能帮到你~</strong>
+                <table border="1" width="250px">
+                    <tr>
+                        <th>
+                            <a href="https://www.bilibili.com">
+                                <p>B站</p>
+                            </a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <a href="https://pan.baidu.com/">
+                                <p>百度网盘</p>
+                            </a>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <a href="https://www.deepseek.com/">
+                                <p>deepseek</p>
+                            </a>
+                        </th>
+                    </tr>
+                </table>
+                <p>在我的空闲时间，我喜欢阅读、旅行和尝试新的食谱。我相信生活是一个不断学习和探索的过程。</p>
+                <p>如果你想了解更多关于我的信息，或者有任何问题，请随时联系我。</p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+</body>
+<script>
+    let currentIndex = 0;
+    const images = document.querySelectorAll('.photos img');
+    const totalImages = images.length;
+
+    function showNextImage() {
+        images[currentIndex].classList.remove('active');
+        currentIndex = (currentIndex + 1) % totalImages;
+        images[currentIndex].classList.add('active');
+    }
+
+    setInterval(showNextImage, 3000);
+</script>
+</html>

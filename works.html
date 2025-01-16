@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收集的声音</title>
+    <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4812367_4ixqz7u8ozr.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(rgb(235, 185, 193), rgb(182, 227, 231));
+            color: #484848;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 30px 0;
+            color: #484848;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .music-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .music-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .music-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .music-card h2 {
+            color: #484848;
+            margin-bottom: 15px;
+        }
+
+        .music-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            height: 5px;
+            width: 100%;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            background: #484848;
+            height: 100%;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .control-buttons button {
+            background: transparent;
+            border: 2px solid #484848;
+            color: #484848;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-buttons button:hover {
+            background: #484848;
+            color: #fff;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .volume-control input {
+            width: 100%;
+            accent-color: #77aaff;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: rgba(160, 171, 191, 0.5);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .home-button:hover {
+            background-color: rgba(170, 176, 181, 0.5); 
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="home-button">返回首页</a>
+    </nav>
+    <div class="container">
+        <h1 class="title">请您聆听</h1>
+        <div class="music-container">
+            <div class="music-card">
+                <h2>无问西东</h2>
+                <div class="music-controls">
+                    <audio id="audio1" src="./无问西东.mp3"></audio>
+                    <div class="progress-container" onclick="seek(event, 0)">
+                        <div class="progress-bar" id="progress0"></div>
+                    </div>
+                    <div class="time-info">
+                        <span id="current-time0">0:00</span>
+                        <span id="duration0">0:00</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button onclick="playPause(0)">播放/暂停</button>
+                    </div>
+                    <div class="volume-control">
+                        <span class="iconfont icon-yinliang"></span>
+                        <input type="range" min="0" max="1" step="0.1" value="1" 
+                               onchange="changeVolume(this.value, 0)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="music-card">
+                <h2>弹</h2>
+                <div class="music-controls">
+                    <audio id="audio2" src="./弹.mp3"></audio>
+                    <div class="progress-container" onclick="seek(event, 1)">
+                        <div class="progress-bar" id="progress1"></div>
+                    </div>
+                    <div class="time-info">
+                        <span id="current-time1">0:00</span>
+                        <span id="duration1">0:00</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button onclick="playPause(1)">播放/暂停</button>
+                    </div>
+                    <div class="volume-control">
+                        <span class="iconfont icon-yinliang"></span>
+                        <input type="range" min="0" max="1" step="0.1" value="1" 
+                               onchange="changeVolume(this.value, 1)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="music-card">
+                <h2>烟花</h2>
+                <div class="music-controls">
+                    <audio id="audio3" src="./烟花.mp3"></audio>
+                    <div class="progress-container" onclick="seek(event, 2)">
+                        <div class="progress-bar" id="progress2"></div>
+                    </div>
+                    <div class="time-info">
+                        <span id="current-time2">0:00</span>
+                        <span id="duration2">0:00</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button onclick="playPause(2)">播放/暂停</button>
+                    </div>
+                    <div class="volume-control">
+                        <span class="iconfont icon-yinliang"></span>
+                        <input type="range" min="0" max="1" step="0.1" value="1" 
+                               onchange="changeVolume(this.value, 2)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="music-card">
+                <h2>蝉鸣</h2>
+                <div class="music-controls">
+                    <audio id="audio4" src="./蝉鸣.mp3"></audio>
+                    <div class="progress-container" onclick="seek(event, 3)">
+                        <div class="progress-bar" id="progress3"></div>
+                    </div>
+                    <div class="time-info">
+                        <span id="current-time3">0:00</span>
+                        <span id="duration3">0:00</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button onclick="playPause(3)">播放/暂停</button>
+                    </div>
+                    <div class="volume-control">
+                        <span class="iconfont icon-yinliang"></span>
+                        <input type="range" min="0" max="1" step="0.1" value="1" 
+                               onchange="changeVolume(this.value, 3)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audioElements = [
+            document.getElementById('audio1'),
+            document.getElementById('audio2'),
+            document.getElementById('audio3'),
+            document.getElementById('audio4')
+        ];
+
+        const progressBars = Array.from({length: 4}, (_, i) => 
+            document.getElementById(`progress${i}`));
+
+        function playPause(index) {
+            const audio = audioElements[index];
+            if (audio.paused) {
+                audioElements.forEach((a, i) => {
+                    if (i !== index && !a.paused) {
+                        a.pause();
+                        updateProgressBar(i);
+                    }
+                });
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        function updateProgressBar(index) {
+            const audio = audioElements[index];
+            const progressBar = progressBars[index];
+            const currentTimeSpan = document.getElementById(`current-time${index}`);
+            const durationSpan = document.getElementById(`duration${index}`);
+
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            currentTimeSpan.textContent = formatTime(audio.currentTime);
+            durationSpan.textContent = formatTime(audio.duration);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function seek(event, index) {
+            const audio = audioElements[index];
+            const progressContainer = event.currentTarget;
+            const clickPosition = (event.offsetX / progressContainer.offsetWidth);
+            audio.currentTime = clickPosition * audio.duration;
+        }
+
+        function changeVolume(value, index) {
+            audioElements[index].volume = value;
+        }
+
+        audioElements.forEach((audio, index) => {
+            audio.addEventListener('timeupdate', () => updateProgressBar(index));
+            audio.addEventListener('loadedmetadata', () => updateProgressBar(index));
+        });
+    </script>
+</body>
+</html>
